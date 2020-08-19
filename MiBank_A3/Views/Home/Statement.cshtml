@@ -1,0 +1,109 @@
+﻿@model MiBank_A3.ViewModels.StatementViewModel
+
+@{ ViewData["Title"] = $"Statement for {Model.Account.AccountType} account #{Model.Account.AccountId}"; }
+
+<h1>Statement for @Model.Account.AccountType account #@Model.Account.AccountId</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions.First().TransactionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions.First().TransactionTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions.First().TransactionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions.First().Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transactions.First().Comment)
+            </th>
+            <th>
+                Other remarks
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Transactions)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionType)
+            </td>
+            <td>
+                @if (Model.Account.AccountId != item.AccountId
+                    || item.TransactionType == TransactionType.Deposit)
+                {
+                    @:+
+                }
+                else
+                {
+                    @:-
+                }
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>
+            <td>
+                @if (item.TransactionType == TransactionType.Transfer)
+                {
+                    @if (Model.Account.AccountId != item.AccountId)
+                    {
+                    @:Transferred from account #@item.AccountId
+                    }
+                    else
+                    {
+                    @:Transfer to account #@item.TransferTargetId
+                    }                
+                }
+                @if (item.TransactionType == TransactionType.BillPay
+                   && item.Amount == 0)
+                {
+                    @:Insufficient funds were available to pay $@item.Comment
+                }
+
+                @if (item.TransactionType == TransactionType.Service_Charge)
+                {
+                    @:Fee for transaction #@item.Comment
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<span>
+    @if (Model.PrevPage != -1)
+    {
+        @Html.ActionLink("Previous Page", "Statement", "Home", new { page = @Model.PrevPage }, null) }
+    else
+    {
+        @:Previous Page
+    }
+</span>
+|
+<span>
+    @if (Model.NextPage != -1)
+    {
+        @Html.ActionLink("Next Page", "Statement", "Home", new { page = @Model.NextPage }, null) }
+    else
+    {
+        @:Next Page
+    }
+</span>
+<br/>
+<div>
+    <a class="btn btn-primary" asp-action="Accounts">Back to Account List</a>
+</div>

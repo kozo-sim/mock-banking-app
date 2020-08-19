@@ -1,0 +1,66 @@
+﻿@model MiBank_A3.ViewModels.BillPayViewModel
+@{
+    ViewData["Title"] = "BillPay - Pay bill";
+}
+
+<h1>
+    @if (Model.Bill.BillPayId == 0)
+    {
+        @:New BillPay Payment
+    }
+    else
+    {
+        @:Edit BillPay Payment #@Model.Bill.BillPayId
+    }
+</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Pay">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Bill.BillPayId" />
+            <div class="form-group">
+                <label asp-for="Bill.AccountId" class="control-label">From Account</label>
+                @Html.DropDownListFor(x => x.Bill.AccountId, new SelectList(Model.Customer.Accounts, nameof(Account.AccountId), nameof(Account.AccountType)), new { @class = "form-control" })
+                <span asp-validation-for="Bill.AccountId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bill.PayeeId" class="control-label">Transfer Destination</label>
+                @Html.DropDownListFor(x => x.Bill.PayeeId, new SelectList(Model.Payees, nameof(Payee.PayeeId), nameof(Payee.PayeeName)), new { @class = "form-control" })
+                <span asp-validation-for="Bill.PayeeId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Bill.Amount" class="control-label"></label>
+                <input asp-for="Bill.Amount" class="form-control" />
+                <span asp-validation-for="Bill.Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Bill.ScheduleDate" class="control-label">Start Date</label>
+                <input asp-for="Bill.ScheduleDate" class="form-control" />
+                <span asp-validation-for="Bill.ScheduleDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Bill.Period" class="control-label">Transaction Type</label>
+                <select asp-for="Bill.Period" asp-items="@Html.GetEnumSelectList<BillingPeriod>()" class="form-control"></select>
+                <span asp-validation-for="Bill.Period" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+                @if (Model.Bill.BillPayId != 0)
+                {
+                    @Html.ActionLink("Delete", "Delete", "Bills", new { id = @Model.Bill.BillPayId }, new {@class="btn btn-danger"})
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

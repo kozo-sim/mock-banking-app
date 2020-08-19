@@ -1,0 +1,17 @@
+﻿@model MiBank_A3.Models.BillPay
+@{
+    ViewData["Title"] = "Delete Bill";
+}
+
+<div>
+    Really delete bill #@Model.BillPayId?
+</div>
+
+<div>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="BillPayId" />
+        <span asp-validation-for="BillPayId" class="text-danger"></span>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a class="btn btn-secondary" asp-action="Delete">Cancel</a>
+    </form>
+</div>

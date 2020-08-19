@@ -1,0 +1,56 @@
+﻿@model MiBank_A3.ViewModels.ATMViewModel
+@using MiBank_A3.ViewModels
+@{
+    ViewData["Title"] = "ATM";
+}
+
+<h1>
+    Welcome @Model.Customer.CustomerName
+</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ATM">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TransactionType" class="control-label">Transaction Type</label>
+                <select asp-for="TransactionType" asp-items="@Html.GetEnumSelectList<ATMPageTransactionTypes>()" class="form-control"></select>
+                <span asp-validation-for="TransactionType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="AccountId" class="control-label">Account Id</label>
+                @Html.DropDownListFor(x => x.AccountId, new SelectList(Model.Customer.Accounts, nameof(Account.AccountId), nameof(Account.AccountType)), new { @class = "form-control" })
+                <span asp-validation-for="AccountId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetAccountId" class="control-label">Transfer Destination</label>
+                @Html.DropDownListFor(x => x.TargetAccountId, new SelectList(Model.Customer.Accounts, nameof(Account.AccountId), nameof(Account.AccountType)), "N/A", new { @class = "form-control" })
+                <span asp-validation-for="TargetAccountId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Comment" class="control-label"></label>
+                <input asp-for="Comment" class="form-control" />
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Accounts">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,105 @@
+﻿@model MiBank_A3.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<h1>
+    My Profile
+</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Profile">
+
+            <div class="form-group">
+                <label asp-for="Customer.CustomerId" class="control-label"></label>
+                <span class="form-control">@Model.Customer.CustomerId</span>
+                <span asp-validation-for="Customer.CustomerId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="Customer.CustomerName" class="control-label"></label>
+                <input asp-for="Customer.CustomerName" class="form-control" />
+                <span asp-validation-for="Customer.CustomerName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.TFN" class="control-label"></label>
+                <input asp-for="Customer.TFN" class="form-control" />
+                <span asp-validation-for="Customer.TFN" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.Address" class="control-label"></label>
+                <input asp-for="Customer.Address" class="form-control" />
+                <span asp-validation-for="Customer.Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.City" class="control-label"></label>
+                <input asp-for="Customer.City" class="form-control" />
+                <span asp-validation-for="Customer.City" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.State" class="control-label"></label>
+                <select asp-for="Customer.State" asp-items="@Html.GetEnumSelectList<State>()" class="form-control"></select>
+                <span asp-validation-for="Customer.State" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.PostCode" class="control-label"></label>
+                <input asp-for="Customer.PostCode" class="form-control" />
+                <span asp-validation-for="Customer.PostCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.Phone" class="control-label"></label>
+                <input asp-for="Customer.Phone" class="form-control" />
+                <span asp-validation-for="Customer.Phone" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Action" value="@MiBank_A3.ViewModels.profilePostAction.UPDATE_USER" />
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Accounts">Cancel</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-5">
+
+        <form asp-action="Profile">
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OldPassword" class="control-label">Old Password</label>
+                <input asp-for="OldPassword" type="password" class="form-control" />
+                <span asp-validation-for="OldPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPassword" class="control-label">New Password</label>
+                <input asp-for="NewPassword" type="password" class="form-control" />
+                <span asp-validation-for="NewPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPasswordConfirm" class="control-label">New Password (confirm)</label>
+                <input asp-for="NewPasswordConfirm" type="password" class="form-control" />
+                <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Action" value="@MiBank_A3.ViewModels.profilePostAction.UPDATE_LOGIN"/>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Accounts">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

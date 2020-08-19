@@ -1,0 +1,113 @@
+﻿@model MiBank_A3.ViewModels.BillListViewModel
+
+@{
+    ViewData["Title"] = "BillPay";
+}
+
+<h1>
+    List of active BillPay payments
+</h1>
+
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().BillPayId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().AccountId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().Account.AccountType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().Payee.PayeeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().ScheduleDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().Period)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().ModifyDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bill in Model.Bills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.BillPayId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.AccountId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.Account.AccountType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.Payee.PayeeName)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => bill.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.ScheduleDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => bill.Period)
+                </td>
+                <td>
+                    @if (bill.ModifyDate.Ticks != 0)
+                    {
+                        @Html.DisplayFor(modelItem => bill.ModifyDate)
+                    }
+                </td>
+                <td>
+                    <a asp-action="Pay" asp-route-id="@bill.BillPayId">Edit Payment</a>
+                    @if (bill.BillPayId != 0)
+                    {
+                        @:|
+                        @Html.ActionLink("Delete", "Delete", "Bills", new { id = @bill.BillPayId }, null)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<span>
+    @if (Model.prevPage != -1)
+    {
+        @Html.ActionLink("Previous Page", "Index", "Bills", new { id = @Model.prevPage }, null)
+    }
+    else
+    {
+        @:Previous Page
+    }
+</span>
+|
+<span>
+    @if (Model.nextPage != -1)
+    {
+        @Html.ActionLink("Next Page", "Index", "Bills", new { id = @Model.nextPage }, null)
+    }
+    else
+    {
+        @:Next Page
+    }
+</span>
+<br />
+<br />
+<div>
+    <a class="btn btn-primary" asp-action="Pay">New Payment</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,47 @@
+﻿@model MiBank_A3.Models.Customer
+
+@{
+    ViewData["Title"] = "Statements";
+}
+
+<h1>Welcome @Html.DisplayFor(model => model.CustomerName) </h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Accounts.First().AccountId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Accounts.First().AccountType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Accounts.First().Balance)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Accounts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Balance)
+                </td>
+                <td>
+                    <a asp-action="Statement" asp-route-id="@item.AccountId">View Statement</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div>
+    <a class="btn btn-primary" asp-action="">New Transaction</a>
+</div>
