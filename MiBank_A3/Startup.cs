@@ -26,9 +26,10 @@ namespace MiBank_A3
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSession(opts =>
-                opts.Cookie.IsEssential = true
-            );
+            services.AddSession(opts => {
+                opts.Cookie.IsEssential = true;
+                opts.IdleTimeout = TimeSpan.FromMinutes(1);
+            });
             services.AddControllersWithViews();
             services.AddHostedService<BillPayExecutionService>();
             services.AddDbContext<MiBankContext>(options =>
@@ -50,14 +51,8 @@ namespace MiBank_A3
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-
             app.UseRouting();
-
-            //app.UseAuthorization();
             app.UseSession();
-
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
