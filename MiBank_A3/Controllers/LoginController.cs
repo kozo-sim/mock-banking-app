@@ -31,11 +31,20 @@ namespace MiBank_A3.Controllers
         public async Task<ActionResult> Index(LoginViewModel vm)
         {
             var customerId = await _context.Login(vm.Username, vm.Password);
-            if (customerId == -1)
+            switch (customerId)
             {
-                ModelState.AddModelError(nameof(vm.Password), "Username/password combination incorrect");
-                //vm.Password = "";
-                return View(vm);
+                case (int)loginResult.MAX_ATTEMPTS:
+                    ModelState.AddModelError(nameof(vm.Password), "Maximum login attempts exceeded");
+                    return View(vm);
+                case (int)loginResult.NO_PASSWORD:
+                    ModelState.AddModelError(nameof(vm.Password), "No password entered");
+                    return View(vm);
+                case (int)loginResult.NO_USER:
+                    ModelState.AddModelError(nameof(vm.Username), "User not found");
+                    return View(vm);
+                case (int)loginResult.WRONG_PASSWORD:
+                    ModelState.AddModelError(nameof(vm.Password), "Username/password combination incorrect");
+                    return View(vm);
             }
 
             HttpContext.Session.SetInt32(nameof(Customer.CustomerId), customerId);

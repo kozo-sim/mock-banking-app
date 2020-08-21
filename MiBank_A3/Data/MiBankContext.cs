@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MiBank_A3.Models;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace MiBank_A3.Models
 {
@@ -164,20 +165,48 @@ namespace MiBank_A3.Models
             return SimpleHashing.PBKDF2.Verify(hash, password);
         }
 
+
+        //variables to be used in Login() method
+        private static Dictionary<int, int> failedLoginAttempts;
+        const int MAX_LOGIN_ATTEMPTS = 3;
+
         public async Task<int> Login(string username, string password)
         {
+            if(failedLoginAttempts == null)
+            {
+                 failedLoginAttempts = new Dictionary<int, int>();
+            }
             if (password == null)
             {
-                return -1;
+                return (int)loginResult.NO_PASSWORD;
             }
             var login = await GetLogin(username);
-            if (login == null || !VerifyHash(login.PasswordHash, password))
+            if (login == null)
             {
-                return -1;
+                return (int)loginResult.NO_USER;
+            }
+
+            if(failedLoginAttempts.GetValueOrDefault(login.CustomerID) >= MAX_LOGIN_ATTEMPTS)
+            {
+                return (int)loginResult.MAX_ATTEMPTS;
+            }
+            if (!VerifyHash(login.PasswordHash, password))
+            {
+                failedLoginAttempts.TryAdd(login.CustomerID, 0);
+                failedLoginAttempts[login.CustomerID]++;
+                return (int)loginResult.WRONG_PASSWORD;
             }
 
             return login.CustomerID;
         }
+
+        //called once a minute from LoginTimerService
+        public void resetLoginTimers()
+        {
+            //zero out failed attempts
+            failedLoginAttempts = new Dictionary<int, int>();
+        }
+
 
         public async Task<bool> UpdateLogin(int customerId, string oldPassword, string newUsername = null, string newPassword = null)
         {

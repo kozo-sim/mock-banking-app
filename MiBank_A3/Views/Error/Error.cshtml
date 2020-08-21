@@ -1,0 +1,8 @@
+﻿@model ErrorViewModel
+<div>
+    <span>An error occured</span>
+</div>
+@if (Model.HttpCode.HasValue)
+{
+    @:<span>Error code; @Model.HttpCode</span>
+}
