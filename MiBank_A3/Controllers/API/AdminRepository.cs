@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using MiBank_A3.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,19 +22,17 @@ namespace MiBank_A3.Models.Repository
             _context = context;
         }
 
+        [AuthorizeAdmin]
         [HttpGet("users")]
         public List<Customer> GetUsers()
         {
             return _context.GetAllCustomers();
         }
 
+        [AuthorizeAdmin]
         [HttpGet("transactions/{id}")]
         public async Task<List<Transaction>> TransactionHistory(int id)
         {
-            if (!IsLoggedIn())
-            {
-                return null;
-            }
             var c = await _context.GetCustomer(id);
             if (c == null)
             {
@@ -43,30 +42,24 @@ namespace MiBank_A3.Models.Repository
             return _context.GetAllCustomerTransactions(id);
         }
 
+        [AuthorizeAdmin]
         [HttpGet("user/{id}")]
         public async Task<Customer> GetCustomerDetails(int id)
         {
-            if (!IsLoggedIn())
-            {
-                return null;
-            }
             return await _context.GetCustomer(id);
         }
 
 
+        [AuthorizeAdmin]
         [HttpPost("user/{id}")]
         public async Task<string> SetCustomerDetails([FromBody] Customer cust)
         {
-            if (!IsLoggedIn())
-            {
-                return "not logged in";
-            }
-
             var c = await _context.GetCustomer(cust.CustomerId);
             _context.Update<Customer>(c);
             return $"updated customer {cust.CustomerId}";
         }
 
+        [AuthorizeAdmin]
         [HttpPost("lock/{id}")]
         public string LockCustomer(int customerId)
         {
@@ -75,12 +68,14 @@ namespace MiBank_A3.Models.Repository
         }
 
 
+        [AuthorizeAdmin]
         [HttpGet("bills")]
         public List<BillPay> getBills()
         {
             return _context.GetAllBills();
         }
 
+        [AuthorizeAdmin]
         [HttpGet("bills/{id}")]
         public List<BillPay> getBills(int id)
         {
@@ -88,6 +83,7 @@ namespace MiBank_A3.Models.Repository
         }
 
 
+        [AuthorizeAdmin]
         [HttpPost("block/{custid}/{id}")]
         public async Task<string> BlockBillPay(int custid,int id)
         {
@@ -101,6 +97,7 @@ namespace MiBank_A3.Models.Repository
             return $"blocked bill {id}";
         }
 
+        [AuthorizeAdmin]
         [HttpPost("unblock/{custid}/{id}")]
         public async Task<string> UnblockBillPay(int custid, int id)
         {
@@ -133,18 +130,6 @@ namespace MiBank_A3.Models.Repository
         {
             HttpContext.Session.SetString("login", "false");
             return "ok";
-        }
-
-
-
-        private bool IsLoggedIn()
-        {
-            if (HttpContext.Session.GetString("login") == "true")
-            {
-                return true;
-            }
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            return false;
         }
     }
 }
