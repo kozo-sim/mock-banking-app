@@ -8,6 +8,14 @@ using System.Threading.Tasks;
 namespace MiBank_A3.Models
 {
 
+    //returned on login failure
+    enum loginResult
+    {
+        NO_PASSWORD = -1,
+        NO_USER = -2,
+        MAX_ATTEMPTS = -3,
+        WRONG_PASSWORD = -4
+    }
     public class Login
     {
         //properties

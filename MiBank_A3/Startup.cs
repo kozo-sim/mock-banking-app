@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MiBank_A3.Data;
 using MiBank_A3.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,11 +27,13 @@ namespace MiBank_A3
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSession(opts =>
-                opts.Cookie.IsEssential = true
-            );
+            services.AddSession(opts => {
+                opts.Cookie.IsEssential = true;
+                opts.IdleTimeout = TimeSpan.FromMinutes(1);
+            });
             services.AddControllersWithViews();
             services.AddHostedService<BillPayExecutionService>();
+            services.AddHostedService<LoginTimerService>();
             services.AddDbContext<MiBankContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
         }
@@ -40,24 +43,21 @@ namespace MiBank_A3
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Error/Error");
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-
+            //app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/error","?httpCode={0}");
             app.UseRouting();
-
-            //app.UseAuthorization();
             app.UseSession();
-
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
