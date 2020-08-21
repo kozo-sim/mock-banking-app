@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace MiBank_A3.Models
         OK_PAID,
         OK_NOT_PAID,
         FAIL_NOT_ENOUGH,
+        BLOCKED
     }
 
     public class BillPay
@@ -62,6 +64,10 @@ namespace MiBank_A3.Models
         [Display(Name = "Last Charged On")]
         public DateTime ModifyDate { get; set; }
 
+        [Required]
+        [DefaultValue(false)]
+        public bool Blocked { get; set; }
+
 
         //navigation properites
 
@@ -94,6 +100,10 @@ namespace MiBank_A3.Models
         //called by the system once a minute when a payment should be attempted
         public BillPayResultBag doScheduledPayment()
         {
+            if (Blocked)
+            {
+                return new BillPayResultBag(ScheduledBillPayResult.BLOCKED);
+            }
             ModifyDate = roundDown(ModifyDate);
             ScheduleDate = roundDown(ScheduleDate);
             var now = roundDown(DateTime.Now);

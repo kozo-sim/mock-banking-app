@@ -36,49 +36,58 @@
             <th>
                 @Html.DisplayNameFor(model => model.Bills.First().ModifyDate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bills.First().Blocked)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var bill in Model.Bills)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.BillPayId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.AccountId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.Account.AccountType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.Payee.PayeeName)
-                </td>
-                <td>
-                    $@Html.DisplayFor(modelItem => bill.Amount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.ScheduleDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => bill.Period)
-                </td>
-                <td>
-                    @if (bill.ModifyDate.Ticks != 0)
-                    {
-                        @Html.DisplayFor(modelItem => bill.ModifyDate)
-                    }
-                </td>
-                <td>
-                    <a asp-action="Pay" asp-route-id="@bill.BillPayId">Edit Payment</a>
-                    @if (bill.BillPayId != 0)
-                    {
-                        @:|
-                        @Html.ActionLink("Delete", "Delete", "Bills", new { id = @bill.BillPayId }, null)
-                    }
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => bill.BillPayId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => bill.AccountId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => bill.Account.AccountType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => bill.Payee.PayeeName)
+            </td>
+            <td>
+                $@Html.DisplayFor(modelItem => bill.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => bill.ScheduleDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => bill.Period)
+            </td>
+            <td>
+                @if (bill.ModifyDate.Ticks != 0)
+                {
+                    @Html.DisplayFor(modelItem => bill.ModifyDate)
+                }
+            </td>
+            <td>
+                @if (bill.Blocked)
+                {
+                    @:<span class="text-danger">Blocked</span>
+                }
+            </td>
+            <td>
+                <a asp-action="Pay" asp-route-id="@bill.BillPayId">Edit Payment</a>
+                @if (bill.BillPayId != 0)
+                {
+                    @:|
+                    @Html.ActionLink("Delete", "Delete", "Bills", new { id = @bill.BillPayId }, null)
+                }
+            </td>
+        </tr>
         }
     </tbody>
 </table>
