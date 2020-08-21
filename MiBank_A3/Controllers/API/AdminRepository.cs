@@ -29,7 +29,7 @@ namespace MiBank_A3.Models.Repository
                 return null;
             }
             var c = await _context.GetCustomer(id);
-            if(c == null)
+            if (c == null)
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return null;
@@ -60,6 +60,15 @@ namespace MiBank_A3.Models.Repository
             _context.Update<Customer>(c);
             return $"updated customer {cust.CustomerId}";
         }
+
+        [HttpPost("lock/{id}")]
+        public string LockCustomer(int customerId)
+        {
+            _context.lockAccount(customerId);
+            return $"locked {customerId}";
+        }
+
+
 
 
         [HttpPost("login")]

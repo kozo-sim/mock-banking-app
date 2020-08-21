@@ -214,6 +214,13 @@ namespace MiBank_A3.Models
             failedLoginAttempts = new Dictionary<int, int>();
         }
 
+        //called from api
+        public void lockAccount(int customerId)
+        {
+            failedLoginAttempts[customerId] = int.MaxValue;
+        }
+
+
 
         public async Task<bool> UpdateLogin(int customerId, string oldPassword, string newUsername = null, string newPassword = null)
         {
