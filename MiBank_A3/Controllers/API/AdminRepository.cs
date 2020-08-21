@@ -21,6 +21,12 @@ namespace MiBank_A3.Models.Repository
             _context = context;
         }
 
+        [HttpGet("users")]
+        public List<Customer> GetUsers()
+        {
+            return _context.GetAllCustomers();
+        }
+
         [HttpGet("transactions/{id}")]
         public async Task<List<Transaction>> TransactionHistory(int id)
         {

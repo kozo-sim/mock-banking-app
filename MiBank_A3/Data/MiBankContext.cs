@@ -83,6 +83,11 @@ namespace MiBank_A3.Models
             return Customers.FindAsync(CustomerId);
         }
 
+        public List<Customer> GetAllCustomers()
+        {
+            return Customers.ToList();
+        }
+
         public Task<Customer> GetCustomerWithAccounts(int? CustomerId)
         {
             return Customers
