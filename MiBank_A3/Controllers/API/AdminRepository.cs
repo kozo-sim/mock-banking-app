@@ -12,6 +12,7 @@ namespace MiBank_A3.Models.Repository
 {
     [Route("api")]
     [ApiController]
+    [SkipStatusCodePages]
     public class AdminRepository : ControllerBase
     {
         private readonly MiBankContext _context;
