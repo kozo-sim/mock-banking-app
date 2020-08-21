@@ -72,7 +72,7 @@ namespace MiBank_A3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Pay(BillPayViewModel vm)
         {
-            bool update = vm.Bill.PayeeId == 0 ? false : true;
+            bool update = vm.Bill.BillPayId == 0 ? false : true;
             vm.Bill.Account = await _context.Accounts.FindAsync(vm.Bill.AccountId);
             vm.Bill.Payee = await _context.Payee.FindAsync(vm.Bill.PayeeId);
 
@@ -87,14 +87,23 @@ namespace MiBank_A3.Controllers
                 case BillPayResult.FAIL_FORMAT:
                     goto ErrorCleanup;
                 case BillPayResult.OK:
-                    if(vm.Bill.BillPayId == 0)
+                    if(update)
                     {
-                        await _context.BillPay.AddAsync(vm.Bill);
+                        var oldBill = await _context.GetBill(vm.Bill.BillPayId, CustomerId);
+                        //check we don't edit someone else's bill
+                        if (oldBill == null)
+                        {
+                            ModelState.AddModelError($"Bill.{nameof(BillPay.BillPayId)}", "Illegal BillId in request");
+                            goto ErrorCleanup;
+                        }
+                        //prevent 'Blocked' attribute from being set by users
+                        vm.Bill.Blocked = oldBill.Blocked;
+                        _context.BillPay.Update(vm.Bill);
                     }
                     else
                     {
-                        //todo; check we don't edit someone else's bill
-                        _context.BillPay.Update(vm.Bill);
+                        vm.Bill.Blocked = false;
+                        await _context.BillPay.AddAsync(vm.Bill);
                     }
                     await _context.SaveChangesAsync();
                     break;
