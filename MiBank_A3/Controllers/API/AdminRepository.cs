@@ -36,6 +36,31 @@ namespace MiBank_A3.Models.Repository
             return _context.GetAllCustomerTransactions(id);
         }
 
+        [HttpGet("user/{id}")]
+        public async Task<Customer> GetCustomerDetails(int id)
+        {
+            if (!IsLoggedIn())
+            {
+                return null;
+            }
+            return await _context.GetCustomer(id);
+        }
+
+
+        [HttpPost("user/{id}")]
+        public async Task<string> SetCustomerDetails([FromBody] Customer cust)
+        {
+            if (!IsLoggedIn())
+            {
+                return "not logged in";
+            }
+
+            var c = await _context.GetCustomer(cust.CustomerId);
+            _context.Update<Customer>(c);
+            return $"updated customer {cust.CustomerId}";
+        }
+
+
         [HttpPost("login")]
         public string Login(string username, string password)
         {
