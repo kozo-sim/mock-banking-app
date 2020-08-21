@@ -69,6 +69,45 @@ namespace MiBank_A3.Models.Repository
         }
 
 
+        [HttpGet("bills")]
+        public List<BillPay> getBills()
+        {
+            return _context.GetAllBills();
+        }
+
+        [HttpGet("bills/{id}")]
+        public List<BillPay> getBills(int id)
+        {
+            return _context.GetBills(id);
+        }
+
+
+        [HttpPost("block/{custid}/{id}")]
+        public async Task<string> BlockBillPay(int custid,int id)
+        {
+            var bill = await _context.GetBill(custid, id);
+            if(bill == null)
+            {
+                return "request parameters invalid";
+            }
+            bill.Blocked = true;
+            _context.Update(bill);
+            return $"blocked bill {id}";
+        }
+
+        [HttpPost("unblock/{custid}/{id}")]
+        public async Task<string> UnblockBillPay(int custid, int id)
+        {
+            var bill = await _context.GetBill(custid, id);
+            if (bill == null)
+            {
+                return "request parameters invalid";
+            }
+            bill.Blocked = false;
+            _context.Update(bill);
+            return $"unblocked bill {id}";
+        }
+
 
 
         [HttpPost("login")]
