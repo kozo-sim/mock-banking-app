@@ -49,12 +49,20 @@
                 <span asp-validation-for="Bill.Period" class="text-danger"></span>
             </div>
 
+            @if (Model.Bill.Blocked)
+            {
+                @:<div class="form-group">
+                    @:<label asp-for="Bill.Blocked" class="control-label">Blocked</label>
+                    @:<span class="text-danger">Payment blocked by admin</span>
+                @:</div>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
                 @if (Model.Bill.BillPayId != 0)
                 {
-                    @Html.ActionLink("Delete", "Delete", "Bills", new { id = @Model.Bill.BillPayId }, new {@class="btn btn-danger"})
+                    @Html.ActionLink("Delete", "Delete", "Bills", new { id = @Model.Bill.BillPayId }, new { @class = "btn btn-danger" })
                 }
             </div>
         </form>
