@@ -14,7 +14,7 @@ namespace MiBank_A3.Models
             : base(options)
         {
         }
-        
+
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transaction> BankTransactions { get; set; }
@@ -108,10 +108,17 @@ namespace MiBank_A3.Models
         }
 
         //NOTE: includes transactions sent to this account
-        public List<Transaction> GetAllTransactions(int? accountId)
+        public List<Transaction> GetAllAccountTransactions(int? accountId)
         {
             return BankTransactions
                 .Where(t => t.TransferTargetId == accountId || t.AccountId == accountId).ToList();
+        }
+
+        //NOTE: includes transactions sent to this customer's accounts
+        public List<Transaction> GetAllCustomerTransactions(int customerId)
+        {
+            return BankTransactions
+                .Where(t => t.Account.CustomerId == customerId || t.TransferTarget.CustomerId == customerId).ToList();
         }
 
         //TODO; use lazy loading

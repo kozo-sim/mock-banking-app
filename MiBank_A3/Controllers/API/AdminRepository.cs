@@ -20,18 +20,20 @@ namespace MiBank_A3.Models.Repository
             _context = context;
         }
 
-
-
-
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("transactions/{id}")]
+        public async Task<List<Transaction>> TransactionHistory(int id)
         {
-            if (IsLoggedIn())
+            if (!IsLoggedIn())
             {
-                //homepage
-                return new string[] { "value1", "value2" };
+                return null;
             }
-            return null;
+            var c = await _context.GetCustomer(id);
+            if(c == null)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return null;
+            }
+            return _context.GetAllCustomerTransactions(id);
         }
 
         [HttpPost("login")]

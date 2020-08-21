@@ -178,7 +178,7 @@ namespace MiBank_A3.Controllers
                 return View();
             }
 
-            var allTransactions = _context.GetAllTransactions(id)
+            var allTransactions = _context.GetAllAccountTransactions(id)
                 .OrderByDescending(t => t.TransactionId)
                 .ToList();
 
