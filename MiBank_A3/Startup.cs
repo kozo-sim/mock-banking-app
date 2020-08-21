@@ -33,6 +33,7 @@ namespace MiBank_A3
             });
             services.AddControllersWithViews();
             services.AddHostedService<BillPayExecutionService>();
+            services.AddHostedService<LoginTimerService>();
             services.AddDbContext<MiBankContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
         }
