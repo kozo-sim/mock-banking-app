@@ -7,10 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MiBank_A3.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
+    [SkipStatusCodePages]
     public class AdminApiLoginController : ControllerBase
     {
+        //NOTE;
+        //this controller shares the same route as the main API controller
+        //beware of conflicts
+
 
         //POST /login
         [HttpPost("login")]

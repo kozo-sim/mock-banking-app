@@ -15,6 +15,7 @@ namespace MiBank_A3.Controllers.API
     [Route("api")]
     [ApiController]
     [AuthorizeAdmin]
+    [SkipStatusCodePages]
     public class AdminApiController : ControllerBase
     {
         private readonly IAdminApiRepository adminRepository;
@@ -57,23 +58,11 @@ namespace MiBank_A3.Controllers.API
         }
 
         //POST /api/lock/1
-        [HttpPost("lock/{id}")]
-        public string LockBillPay(int billPayId)
+        [HttpPost("lock/{customerId}")]
+        public string LockCustomerAccount(int customerId)
         {
-            var res = adminRepository.LockCustomerAccount(billPayId);
-            return SetBad(res, $"locked {billPayId}");
-        }
-
-        //GET /api/bills
-        [HttpGet("bills")]
-        public List<BillPay> GetBills()
-        {
-            var res = adminRepository.GetBills();
-            if (SetBad(res))
-            {
-                return null;
-            }
-            return res;
+            var res = adminRepository.LockCustomerAccount(customerId);
+            return SetBad(res, $"locked {customerId}");
         }
 
         //GET /api/bills/1

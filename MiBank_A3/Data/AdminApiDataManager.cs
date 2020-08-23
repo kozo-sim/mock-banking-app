@@ -66,6 +66,7 @@ namespace MiBank_A3.Models.Repository
             }
             bill.Blocked = block;
             _context.Update(bill);
+            await _context.SaveChangesAsync();
             return true;
         }
     }
