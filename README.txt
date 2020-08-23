@@ -19,7 +19,8 @@ https://localhost:port/api/login?username=admin&password=admin
 
 A BillPay record will have to be created manually through the assignment 2 UI so that the relevant section can be tested.
 
-GET /api/bills 404s after a mysterious infinite loop(?) at the time of writing. All other endpoints should work.
+GET /api/bills gives a mysterious 404. After debugging the endpoint step-by-step from line 76 of AdminApiController, the return value looks fine, but there appears to be an infinite loop between some navigation properties or something.
+All other endpoints should work.
 
 -----
 
