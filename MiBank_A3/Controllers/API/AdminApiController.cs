@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using MiBank_A3.Models;
 using MiBank_A3.Models.Repository;
@@ -19,24 +20,28 @@ namespace MiBank_A3.Controllers.API
             this.adminRepository = new AdminRepository(context);
         }
 
+        //GET /api/users
         [HttpGet("users")]
         public List<Customer> GetUsers()
         {
             return adminRepository.GetUsers();
         }
 
-        [HttpGet("transactions/{id}")]
-        public async Task<List<Transaction>> TransactionHistory(int id)
+        //GET /api/transactions/1
+        [HttpGet("transactions/{customerId}")]
+        public async Task<List<Transaction>> TransactionHistory(int customerId)
         {
-            return await adminRepository.TransactionHistory(id);
+            return await adminRepository.TransactionHistory(customerId);
         }
 
+        //GET /api/user/1
         [HttpGet("user/{id}")]
         public async Task<Customer> GetCustomerDetails(int id)
         {
             return await adminRepository.GetCustomerDetails(id);
         }
 
+        //POST /api/user/1
         [HttpPost("user/{id}")]
         public string SetCustomerDetails([FromBody] Customer cust)
         {
@@ -44,47 +49,53 @@ namespace MiBank_A3.Controllers.API
             return $"updated customer {cust.CustomerId}";
         }
 
+        //POST /api/lock/1
         [HttpPost("lock/{id}")]
-        public string LockCustomer(int customerId)
+        public string LockBillPay(int billPayId)
         {
-            adminRepository.LockCustomer(customerId);
-            return $"locked {customerId}";
+            adminRepository.LockBillPay(billPayId);
+            return $"locked {billPayId}";
         }
 
+        //GET /api/bills
         [HttpGet("bills")]
         public List<BillPay> GetBills()
         {
             return adminRepository.GetBills();
         }
 
-        [HttpGet("bills/{id}")]
-        public List<BillPay> GetBills(int id)
+        //GET /api/bills/1
+        [HttpGet("bills/{customerId}")]
+        public List<BillPay> GetBills(int customerId)
         {
-            return adminRepository.GetBills(id);
+            return adminRepository.GetBills(customerId);
         }
 
-        [HttpPost("block/{custid}/{id}")]
-        public async Task<string> BlockBillPay(int custid, int id)
+        //POST /api/bill/1/1/block
+        [HttpPost("bill/{custid}/{billPayId}/block")]
+        public async Task<string> BlockBillPay(int custid, int billPayId)
         {
-            var found = await adminRepository.SetBillBlocking(custid, id, true);
+            var found = await adminRepository.SetBillBlocking(custid, billPayId, true);
             if (!found)
             {
                 return "request parameters invalid";
             }
-            return $"blocked bill {id}";
+            return $"blocked bill {billPayId}";
         }
 
-        [HttpPost("unblock/{custid}/{id}")]
-        public async Task<string> UnblockBillPay(int custid, int id)
+        //POST /api/bill/1/1/unblock
+        [HttpPost("bill/{custid}/{billPayId}/unblock")]
+        public async Task<string> UnblockBillPay(int custid, int billPayId)
         {
-            var found = await adminRepository.SetBillBlocking(custid, id, false);
+            var found = await adminRepository.SetBillBlocking(custid, billPayId, false);
             if (!found)
             {
                 return "request parameters invalid";
             }
-            return $"unblocked bill {id}";
+            return $"unblocked bill {billPayId}";
         }
 
+        //POST /login
         [HttpPost("login")]
         public string Login(string username, string password)
         {
@@ -96,11 +107,13 @@ namespace MiBank_A3.Controllers.API
             return "login failed";
         }
 
+        //POST /logout
         [HttpPost("logout")]
         public string Logout()
         {
             HttpContext.Session.SetString("login", "false");
             return "ok";
         }
+
     }
 }

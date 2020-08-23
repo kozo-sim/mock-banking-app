@@ -36,17 +36,17 @@ namespace MiBank_A3.Models.Repository
             return await _context.GetCustomer(id);
         }
 
-        public async void SetCustomerDetails([FromBody] Customer cust)
+        public async Task<Customer> SetCustomerDetails([FromBody] Customer cust)
         {
             var c = await _context.GetCustomer(cust.CustomerId);
             _context.Update<Customer>(c);
+            return c;
         }
 
-        public void LockCustomer(int customerId)
+        public bool LockCustomerAccount(int customerId)
         {
-            _context.lockAccount(customerId);
+            return _context.LockCustomerAccount(customerId);
         }
-
 
         public List<BillPay> GetBills()
         {

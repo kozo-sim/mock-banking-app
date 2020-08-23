@@ -213,16 +213,21 @@ namespace MiBank_A3.Models
         }
 
         //called once a minute from LoginTimerService
-        public void resetLoginTimers()
+        public void ResetLoginTimers()
         {
             //zero out failed attempts
             failedLoginAttempts = new Dictionary<int, int>();
         }
 
         //called from api
-        public void lockAccount(int customerId)
+        public bool LockCustomerAccount(int customerId)
         {
-            failedLoginAttempts[customerId] = int.MaxValue;
+            if(failedLoginAttempts.ContainsKey(customerId))
+            {
+                failedLoginAttempts[customerId] = int.MaxValue;
+                return true;
+            }
+            return false;
         }
 
 

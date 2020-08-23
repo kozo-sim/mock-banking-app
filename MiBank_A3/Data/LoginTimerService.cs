@@ -32,7 +32,7 @@ namespace MiBank_A3.Data
         {
             using var scope = _serviceProvier.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<MiBankContext>();
-            context.resetLoginTimers();
+            context.ResetLoginTimers();
         }
 
         Task IHostedService.StopAsync(CancellationToken cancellationToken)
