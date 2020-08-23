@@ -39,6 +39,7 @@ namespace MiBank_A3.Models
                 switch (resultBag.transactionResult) 
                 {
                     case ScheduledBillPayResult.OK_NOT_PAID:
+                    case ScheduledBillPayResult.BLOCKED:
                         //do nothing
                         break;
                     case ScheduledBillPayResult.OK_PAID:
