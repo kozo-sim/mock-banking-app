@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MiBank_A3.Models.Repository
 {
-    [AuthorizeAdmin]
     public class AdminApiDataManager : IAdminApiRepository
     {
         private readonly MiBankContext _context;
