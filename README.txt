@@ -15,7 +15,8 @@ The API can be tested with the URLs/methods present in the file;
 MiBank_A3/Controllers/API/AdminApiController.cs
 
 Most importantly, login is done by posting to;
-https://localhost:port/api/login?username=admin&password=admin
+https://localhost:44312/api/login?username=admin&password=admin
+(port number may vary?)
 
 A BillPay record will have to be created manually through the assignment 2 UI so that the relevant section can be tested.
 
