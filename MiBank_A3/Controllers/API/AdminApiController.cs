@@ -31,44 +31,58 @@ namespace MiBank_A3.Controllers.API
         [HttpGet("transactions/{customerId}")]
         public async Task<List<Transaction>> TransactionHistory(int customerId)
         {
-            return await adminRepository.TransactionHistory(customerId);
+            var res = await adminRepository.TransactionHistory(customerId);
+            SetBad(res);
+            return res;
         }
 
         //GET /api/user/1
         [HttpGet("user/{id}")]
         public async Task<Customer> GetCustomerDetails(int id)
         {
-            return await adminRepository.GetCustomerDetails(id);
+            var res = await adminRepository.GetCustomerDetails(id);
+            SetBad(res);
+            return res;
         }
 
         //POST /api/user/1
         [HttpPost("user/{id}")]
         public string SetCustomerDetails([FromBody] Customer cust)
         {
-            adminRepository.SetCustomerDetails(cust);
-            return $"updated customer {cust.CustomerId}";
+            var res = adminRepository.SetCustomerDetails(cust);
+            return SetBad(res, $"updated customer {cust.CustomerId}");
         }
 
         //POST /api/lock/1
         [HttpPost("lock/{id}")]
         public string LockBillPay(int billPayId)
         {
-            adminRepository.LockBillPay(billPayId);
-            return $"locked {billPayId}";
+            var res = adminRepository.LockCustomerAccount(billPayId);
+            return SetBad(res, $"locked {billPayId}");
         }
 
         //GET /api/bills
         [HttpGet("bills")]
         public List<BillPay> GetBills()
         {
-            return adminRepository.GetBills();
+            var res = adminRepository.GetBills();
+            if (SetBad(res))
+            {
+                return null;
+            }
+            return res;
         }
 
         //GET /api/bills/1
         [HttpGet("bills/{customerId}")]
         public List<BillPay> GetBills(int customerId)
         {
-            return adminRepository.GetBills(customerId);
+            var res = adminRepository.GetBills(customerId);
+            if (SetBad(res))
+            {
+                return null;
+            }
+            return res;
         }
 
         //POST /api/bill/1/1/block
@@ -76,11 +90,7 @@ namespace MiBank_A3.Controllers.API
         public async Task<string> BlockBillPay(int custid, int billPayId)
         {
             var found = await adminRepository.SetBillBlocking(custid, billPayId, true);
-            if (!found)
-            {
-                return "request parameters invalid";
-            }
-            return $"blocked bill {billPayId}";
+            return SetBad(found, $"blocked bill {billPayId}");
         }
 
         //POST /api/bill/1/1/unblock
@@ -88,11 +98,7 @@ namespace MiBank_A3.Controllers.API
         public async Task<string> UnblockBillPay(int custid, int billPayId)
         {
             var found = await adminRepository.SetBillBlocking(custid, billPayId, false);
-            if (!found)
-            {
-                return "request parameters invalid";
-            }
-            return $"unblocked bill {billPayId}";
+            return SetBad(found, $"unblocked bill {billPayId}");
         }
 
         //POST /login
@@ -115,5 +121,32 @@ namespace MiBank_A3.Controllers.API
             return "ok";
         }
 
+        private bool SetBad(Object o)
+        {
+            if(o == null)
+            {
+                BadRequest();
+                return true;
+            }
+            return false;
+        }
+
+        private string SetBad(Object o, string message)
+        {
+            if(o.GetType() == typeof(bool))
+            {
+                if((bool)o == false)
+                {
+                    BadRequest();
+                    return "bad request";
+                }
+            }
+            if (o == null)
+            {
+                BadRequest();
+                return "bad request";
+            }
+            return message;
+        }
     }
 }
