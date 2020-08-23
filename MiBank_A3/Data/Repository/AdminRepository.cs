@@ -11,10 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MiBank_A3.Models.Repository
 {
-    [Route("api")]
-    [ApiController]
-    [SkipStatusCodePages]
-    public class AdminRepository : ControllerBase
+    [AuthorizeAdmin]
+    public class AdminRepository
     {
         private readonly MiBankContext _context;
         public AdminRepository(MiBankContext context)
@@ -22,114 +20,53 @@ namespace MiBank_A3.Models.Repository
             _context = context;
         }
 
-        [AuthorizeAdmin]
-        [HttpGet("users")]
         public List<Customer> GetUsers()
         {
             return _context.GetAllCustomers();
         }
 
-        [AuthorizeAdmin]
-        [HttpGet("transactions/{id}")]
         public async Task<List<Transaction>> TransactionHistory(int id)
         {
             var c = await _context.GetCustomer(id);
-            if (c == null)
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return null;
-            }
             return _context.GetAllCustomerTransactions(id);
         }
 
-        [AuthorizeAdmin]
-        [HttpGet("user/{id}")]
         public async Task<Customer> GetCustomerDetails(int id)
         {
             return await _context.GetCustomer(id);
         }
 
-
-        [AuthorizeAdmin]
-        [HttpPost("user/{id}")]
-        public async Task<string> SetCustomerDetails([FromBody] Customer cust)
+        public async void SetCustomerDetails([FromBody] Customer cust)
         {
             var c = await _context.GetCustomer(cust.CustomerId);
             _context.Update<Customer>(c);
-            return $"updated customer {cust.CustomerId}";
         }
 
-        [AuthorizeAdmin]
-        [HttpPost("lock/{id}")]
-        public string LockCustomer(int customerId)
+        public void LockCustomer(int customerId)
         {
             _context.lockAccount(customerId);
-            return $"locked {customerId}";
         }
 
 
-        [AuthorizeAdmin]
-        [HttpGet("bills")]
-        public List<BillPay> getBills()
+        public List<BillPay> GetBills()
         {
             return _context.GetAllBills();
         }
 
-        [AuthorizeAdmin]
-        [HttpGet("bills/{id}")]
-        public List<BillPay> getBills(int id)
+        public List<BillPay> GetBills(int id)
         {
             return _context.GetBills(id);
         }
-
-
-        [AuthorizeAdmin]
-        [HttpPost("block/{custid}/{id}")]
-        public async Task<string> BlockBillPay(int custid,int id)
+        public async Task<bool> SetBillBlocking(int custId, int id, bool block)
         {
-            var bill = await _context.GetBill(custid, id);
+            var bill = await _context.GetBill(custId, id);
             if(bill == null)
             {
-                return "request parameters invalid";
+                return false;
             }
-            bill.Blocked = true;
+            bill.Blocked = block;
             _context.Update(bill);
-            return $"blocked bill {id}";
-        }
-
-        [AuthorizeAdmin]
-        [HttpPost("unblock/{custid}/{id}")]
-        public async Task<string> UnblockBillPay(int custid, int id)
-        {
-            var bill = await _context.GetBill(custid, id);
-            if (bill == null)
-            {
-                return "request parameters invalid";
-            }
-            bill.Blocked = false;
-            _context.Update(bill);
-            return $"unblocked bill {id}";
-        }
-
-
-
-        [HttpPost("login")]
-        public string Login(string username, string password)
-        {
-            //stub
-            if(username == "admin" && password == "admin")
-            {
-                HttpContext.Session.SetString("login", "true");
-                return "logged in successfully";
-            }
-            return "login failed";
-        }
-
-        [HttpPost("logout")]
-        public string Logout()
-        {
-            HttpContext.Session.SetString("login", "false");
-            return "ok";
+            return true;
         }
     }
 }
