@@ -222,7 +222,7 @@ namespace MiBank_A3.Models
         //called from api
         public bool LockCustomerAccount(int customerId)
         {
-            if(failedLoginAttempts.ContainsKey(customerId))
+            if(this.GetCustomer(customerId) != null)
             {
                 failedLoginAttempts[customerId] = int.MaxValue;
                 return true;
