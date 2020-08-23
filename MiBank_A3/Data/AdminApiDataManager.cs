@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MiBank_A3.Attributes;
+using MiBank_A3.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace MiBank_A3.Models.Repository
 {
     [AuthorizeAdmin]
-    public class AdminRepository
+    public class AdminApiDataManager : IAdminApiRepository
     {
         private readonly MiBankContext _context;
-        public AdminRepository(MiBankContext context)
+        public AdminApiDataManager(MiBankContext context)
         {
             _context = context;
         }
@@ -36,7 +37,7 @@ namespace MiBank_A3.Models.Repository
             return await _context.GetCustomer(id);
         }
 
-        public async Task<Customer> SetCustomerDetails([FromBody] Customer cust)
+        public async Task<Customer> SetCustomerDetails(Customer cust)
         {
             var c = await _context.GetCustomer(cust.CustomerId);
             _context.Update<Customer>(c);

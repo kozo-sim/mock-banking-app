@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using MiBank_A3.Data.Repository;
 using MiBank_A3.Models;
 using MiBank_A3.Models.Repository;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +15,10 @@ namespace MiBank_A3.Controllers.API
     [ApiController]
     public class AdminApiController : ControllerBase
     {
-        private AdminRepository adminRepository;
+        private IAdminApiRepository adminRepository;
         public AdminApiController(MiBankContext context)
         {
-            this.adminRepository = new AdminRepository(context);
+            this.adminRepository = new AdminApiDataManager(context);
         }
 
         //GET /api/users
