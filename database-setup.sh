@@ -24,7 +24,7 @@ sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${SA_PASSWORD}" -p 1433:1433 
 #stall until initialisation has finished, then send a query to create the database
 #TODO; resolve this race condition
 echo "Waiting for docker container to start..."
-for t in {20..1} ; do
+for t in {30..1} ; do
 	printf "%s \r" $t
 	sleep 1
 done
@@ -38,7 +38,9 @@ sed -i "" "s/\"CustomerContext\": \".*\"/\"CustomerContext\": \"server=${SERVER}
 
 #create and apply migration
 echo "Creating migration..."
+dotnet tool update --global dotnet-ef
 cd MiBank_A3
+rm -r ./Migrations
 dotnet ef migrations add MiBankMigration
 echo "Applying migration..."
 dotnet ef database update
