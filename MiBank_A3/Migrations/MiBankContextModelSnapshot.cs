@@ -15,8 +15,8 @@ namespace MiBank_A3.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("MiBank_A3.Models.Account", b =>
@@ -87,31 +87,31 @@ namespace MiBank_A3.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("City")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                        .HasColumnType("nvarchar(4)")
+                        .HasMaxLength(4);
 
                     b.Property<int>("State")
                         .HasColumnType("int");
 
                     b.Property<string>("TFN")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(11);
 
                     b.HasKey("CustomerId");
 
@@ -130,13 +130,13 @@ namespace MiBank_A3.Migrations
 
                     b.Property<string>("LoginName")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasColumnType("nvarchar(8)")
+                        .HasMaxLength(8);
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64);
 
                     b.HasKey("Id");
 
@@ -158,13 +158,13 @@ namespace MiBank_A3.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("PayeeName")
                         .IsRequired()
@@ -203,8 +203,8 @@ namespace MiBank_A3.Migrations
                         .HasColumnType("decimal(20,2)");
 
                     b.Property<string>("Comment")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<DateTime>("TransactionTime")
                         .HasColumnType("datetime2");
@@ -231,8 +231,6 @@ namespace MiBank_A3.Migrations
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("MiBank_A3.Models.BillPay", b =>
@@ -248,10 +246,6 @@ namespace MiBank_A3.Migrations
                         .HasForeignKey("PayeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Payee");
                 });
 
             modelBuilder.Entity("MiBank_A3.Models.Login", b =>
@@ -261,8 +255,6 @@ namespace MiBank_A3.Migrations
                         .HasForeignKey("MiBank_A3.Models.Login", "CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("MiBank_A3.Models.Transaction", b =>
@@ -277,31 +269,6 @@ namespace MiBank_A3.Migrations
                         .WithMany("ReceivedTransactions")
                         .HasForeignKey("TransferTargetId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Account");
-
-                    b.Navigation("TransferTarget");
-                });
-
-            modelBuilder.Entity("MiBank_A3.Models.Account", b =>
-                {
-                    b.Navigation("Bills");
-
-                    b.Navigation("ReceivedTransactions");
-
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("MiBank_A3.Models.Customer", b =>
-                {
-                    b.Navigation("Accounts");
-
-                    b.Navigation("LoginDetails");
-                });
-
-            modelBuilder.Entity("MiBank_A3.Models.Payee", b =>
-                {
-                    b.Navigation("Bills");
                 });
 #pragma warning restore 612, 618
         }

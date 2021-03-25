@@ -11,15 +11,15 @@ namespace MiBank_A3.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
+                    CustomerId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TFN = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    PostCode = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CustomerName = table.Column<string>(maxLength: 50, nullable: false),
+                    TFN = table.Column<string>(maxLength: 11, nullable: true),
+                    Address = table.Column<string>(maxLength: 50, nullable: true),
+                    City = table.Column<string>(maxLength: 50, nullable: true),
+                    State = table.Column<int>(nullable: false),
+                    PostCode = table.Column<string>(maxLength: 4, nullable: true),
+                    Phone = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,14 +30,14 @@ namespace MiBank_A3.Migrations
                 name: "Payee",
                 columns: table => new
                 {
-                    PayeeId = table.Column<int>(type: "int", nullable: false)
+                    PayeeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PayeeName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PayeeName = table.Column<string>(nullable: false),
+                    Address = table.Column<string>(maxLength: 50, nullable: false),
+                    City = table.Column<string>(maxLength: 50, nullable: false),
+                    State = table.Column<int>(nullable: false),
+                    Postcode = table.Column<string>(nullable: false),
+                    Phone = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,10 +48,10 @@ namespace MiBank_A3.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    AccountId = table.Column<int>(type: "int", nullable: false)
+                    AccountId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    AccountType = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(nullable: false),
+                    AccountType = table.Column<int>(nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(20,2)", nullable: false)
                 },
                 constraints: table =>
@@ -69,11 +69,11 @@ namespace MiBank_A3.Migrations
                 name: "LoginDetails",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LoginName = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    CustomerID = table.Column<int>(type: "int", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false)
+                    LoginName = table.Column<string>(maxLength: 8, nullable: false),
+                    CustomerID = table.Column<int>(nullable: false),
+                    PasswordHash = table.Column<string>(maxLength: 64, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,14 +90,14 @@ namespace MiBank_A3.Migrations
                 name: "BankTransactions",
                 columns: table => new
                 {
-                    TransactionId = table.Column<int>(type: "int", nullable: false)
+                    TransactionId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(20,2)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    TransactionTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TransactionType = table.Column<int>(type: "int", nullable: false),
-                    TransferTargetId = table.Column<int>(type: "int", nullable: true)
+                    Comment = table.Column<string>(maxLength: 100, nullable: true),
+                    TransactionTime = table.Column<DateTime>(nullable: false),
+                    TransactionType = table.Column<int>(nullable: false),
+                    TransferTargetId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -120,15 +120,15 @@ namespace MiBank_A3.Migrations
                 name: "BillPay",
                 columns: table => new
                 {
-                    BillPayId = table.Column<int>(type: "int", nullable: false)
+                    BillPayId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
-                    PayeeId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
+                    PayeeId = table.Column<int>(nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(20,2)", nullable: false),
-                    ScheduleDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Period = table.Column<int>(type: "int", nullable: false),
-                    ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Blocked = table.Column<bool>(type: "bit", nullable: false)
+                    ScheduleDate = table.Column<DateTime>(nullable: false),
+                    Period = table.Column<int>(nullable: false),
+                    ModifyDate = table.Column<DateTime>(nullable: false),
+                    Blocked = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

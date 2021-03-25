@@ -41,9 +41,11 @@ echo "Creating migration..."
 dotnet tool update --global dotnet-ef
 cd MiBank_A3
 rm -r ./Migrations
-dotnet ef migrations add MiBankMigration
+dotnet ef migrations add MiBankMigration --context MiBankContext
+dotnet ef migrations add MiBankIdentityMigration --context MiBank_A3IdentityDbContext
 echo "Applying migration..."
-dotnet ef database update
+dotnet ef database update --context MiBankContext
+dotnet ef database update --context MiBank_A3IdentityDbContext
 
 #database should now be successfully set up
 echo "Database setup completed"

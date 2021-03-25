@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 
 namespace MiBank_A3
 {
@@ -32,10 +34,14 @@ namespace MiBank_A3
                 opts.IdleTimeout = TimeSpan.FromMinutes(1);
             });
             services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddHostedService<BillPayExecutionService>();
             services.AddHostedService<LoginTimerService>();
             services.AddDbContext<MiBankContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
+
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<MiBankContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,11 +64,14 @@ namespace MiBank_A3
             app.UseStatusCodePagesWithReExecute("/error","?httpCode={0}");
             app.UseRouting();
             app.UseSession();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=ATM}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
