@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MiBank_A3.Data;
 using MiBank_A3.Models;
 using MiBank_A3.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,10 @@ namespace MiBank_A3.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly MiBankContext _context;
+        private readonly MiBankContextWrapper _context;
         public LoginController(MiBankContext context)
         {
-            _context = context;
+            _context = new MiBankContextWrapper(context);
         }
 
         // GET: LoginController

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MiBank_A3.Attributes;
+using MiBank_A3.Data;
 using MiBank_A3.Models;
 using MiBank_A3.ViewModels;
 using MiBank_A3.Views;
@@ -16,12 +17,12 @@ namespace MiBank_A3.Controllers
     [AuthorizeCustomer]
     public class BillsController : Controller
     {
-        private readonly MiBankContext _context;
+        private readonly MiBankContextWrapper _context;
         private int CustomerId => HttpContext.Session.GetInt32(nameof(Customer.CustomerId)).Value;
 
         public BillsController(MiBankContext context)
         {
-            _context = context;
+            _context = new MiBankContextWrapper(context);
         }
 
 
@@ -61,7 +62,7 @@ namespace MiBank_A3.Controllers
             {
                 vm.Bill = new BillPay();
             }
-            vm.Payees = _context.GetAllPayees(CustomerId);
+            vm.Payees = _context.GetAllPayees();
             vm.Customer = await _context.GetCustomerWithAccounts(CustomerId);
 
             return View(vm);
@@ -73,8 +74,8 @@ namespace MiBank_A3.Controllers
         public async Task<IActionResult> Pay(BillPayViewModel vm)
         {
             bool update = vm.Bill.BillPayId == 0 ? false : true;
-            vm.Bill.Account = await _context.Accounts.FindAsync(vm.Bill.AccountId);
-            vm.Bill.Payee = await _context.Payee.FindAsync(vm.Bill.PayeeId);
+            vm.Bill.Account = await _context.GetAccount(CustomerId, vm.Bill.AccountId);
+            vm.Bill.Payee = await _context.GetPayee(vm.Bill.PayeeId);
 
             switch (vm.Bill.SchedulePayment())
             {
@@ -98,14 +99,14 @@ namespace MiBank_A3.Controllers
                         }
                         //prevent 'Blocked' attribute from being set by users
                         vm.Bill.Blocked = oldBill.Blocked;
-                        _context.BillPay.Update(vm.Bill);
+                        _context.UpdateBill(CustomerId, vm.Bill);
                     }
                     else
                     {
                         vm.Bill.Blocked = false;
-                        await _context.BillPay.AddAsync(vm.Bill);
+                        _context.CreateBill(CustomerId, vm.Bill);
                     }
-                    await _context.SaveChangesAsync();
+                    _context.SaveChangesAsync();
                     break;
             }
             if (update)
@@ -119,7 +120,7 @@ namespace MiBank_A3.Controllers
             
             return RedirectToAction(nameof(Index));
         ErrorCleanup:
-            vm.Payees = _context.Payee.ToList();
+            vm.Payees = _context.GetAllPayees();
             vm.Customer = await _context.GetCustomerWithAccounts(CustomerId);
             return View(vm);
         }
@@ -134,9 +135,7 @@ namespace MiBank_A3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(BillPay bill)
         {
-            var targetBill = await _context.GetBill(CustomerId, bill.BillPayId);
-            _context.BillPay.Remove(targetBill);
-            await _context.SaveChangesAsync();
+            _context.DeleteBill(CustomerId, bill.BillPayId);
             TempData["successMessage"] = $"Deleted bill #{bill.BillPayId}.";
             return RedirectToAction("Index");
         }

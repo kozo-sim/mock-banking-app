@@ -14,11 +14,11 @@ namespace MiBank_A3.Data
     {
 
         private Timer _timer;
-        private readonly IServiceProvider _serviceProvier;
+        private readonly IServiceProvider _serviceProvider;
 
         public LoginTimerService(IServiceProvider serviceProvider)
         {
-            _serviceProvier = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         Task IHostedService.StartAsync(CancellationToken cancellationToken)
@@ -30,8 +30,7 @@ namespace MiBank_A3.Data
 
         private void PayBills(object state)
         {
-            using var scope = _serviceProvier.CreateScope();
-            using var context = scope.ServiceProvider.GetRequiredService<MiBankContext>();
+            using var context = new MiBankContextWrapper(_serviceProvider);
             context.ResetLoginTimers();
         }
 

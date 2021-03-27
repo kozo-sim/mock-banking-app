@@ -12,6 +12,7 @@ using MiBank_A3.Attributes;
 using System.Security.Cryptography.X509Certificates;
 using MiBank_A3.Views;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MiBank_A3.Data;
 
 namespace MiBank_A3.Controllers
 {
@@ -20,7 +21,7 @@ namespace MiBank_A3.Controllers
     {
         
         
-        private readonly MiBankContext _context;
+        private readonly MiBankContextWrapper _context;
 
         public int CustomerId => HttpContext.Session.GetInt32(nameof(Customer.CustomerId)).Value;
 
@@ -28,7 +29,7 @@ namespace MiBank_A3.Controllers
 
         public HomeController(MiBankContext context)
         {
-            _context = context;
+            _context = new MiBankContextWrapper(context);
         }
 
         //List accounts that each customer has
@@ -66,8 +67,7 @@ namespace MiBank_A3.Controllers
                     switch (depositResult.transactionResult)
                     {
                         case TransactionResult.OK:
-                            _context.BankTransactions.Add(depositResult.transaction);
-                            await _context.SaveChangesAsync();
+                            _context.CreateTransaction(depositResult.transaction);
                             break;
                         case TransactionResult.FAIL_BELOW_ZERO:
                             ModelState.AddModelError(nameof(vm.Amount), "Amount must be above 0");
@@ -85,15 +85,13 @@ namespace MiBank_A3.Controllers
                     switch (withdrawResult.transactionResult)
                     {
                         case TransactionResult.OK:
-                            _context.BankTransactions.Add(withdrawResult.transaction);
-                            await _context.SaveChangesAsync();
+                            _context.CreateTransaction(withdrawResult.transaction);
                             if (withdrawResult.serviceCharge != null)
                             {
                                 //attach previous transactionId to unused Comment field
                                 //this value will be formatted and printed out correctly by the view
                                 withdrawResult.serviceCharge.Comment += withdrawResult.transaction.TransactionId;
-                                _context.BankTransactions.Add(withdrawResult.serviceCharge);
-                                await _context.SaveChangesAsync();
+                                _context.CreateTransaction(withdrawResult.serviceCharge);
                             }
                             break;
                         case TransactionResult.FAIL_BELOW_ZERO:
@@ -127,14 +125,12 @@ namespace MiBank_A3.Controllers
                     switch (transferResult.transactionResult)
                     {
                         case TransactionResult.OK:
-                            await _context.BankTransactions.AddAsync(transferResult.transaction);
-                            await _context.SaveChangesAsync();
+                            _context.CreateTransaction(transferResult.transaction);
                             if (transferResult.serviceCharge != null)
                             {
                                 //include previous transactionId in comment
                                 transferResult.serviceCharge.Comment += transferResult.transaction.TransactionId;
-                                _context.BankTransactions.Add(transferResult.serviceCharge);
-                                await _context.SaveChangesAsync();
+                                _context.CreateTransaction(transferResult.serviceCharge);
                             }
                             break;
                         case TransactionResult.FAIL_BELOW_ZERO:
@@ -212,8 +208,7 @@ namespace MiBank_A3.Controllers
             if (vm.Action == profilePostAction.UPDATE_USER)
             {
                 vm.Customer.CustomerId = CustomerId;
-                _context.Update(vm.Customer);
-                await _context.SaveChangesAsync();
+                _context.UpdateCustomer(vm.Customer);
                 TempData["successMessage"] = $"Updated user info.";
                 return View(vm);
             }else if (vm.Action == profilePostAction.UPDATE_LOGIN)

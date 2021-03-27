@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MiBank_A3.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -13,11 +14,11 @@ namespace MiBank_A3.Models
     {
 
         private Timer _timer;
-        private readonly IServiceProvider _serviceProvier;
+        private readonly IServiceProvider _serviceProvider;
 
         public BillPayExecutionService(IServiceProvider serviceProvider)
         {
-            _serviceProvier = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         Task IHostedService.StartAsync(CancellationToken cancellationToken)
@@ -30,8 +31,7 @@ namespace MiBank_A3.Models
 
         private void PayBills(object state)
         {
-            using var scope = _serviceProvier.CreateScope();
-            using var context = scope.ServiceProvider.GetRequiredService<MiBankContext>();
+            using var context = new MiBankContextWrapper(_serviceProvider);
             var bills = context.GetAllBills();
             foreach(var bill in bills)
             {
@@ -44,16 +44,14 @@ namespace MiBank_A3.Models
                         break;
                     case ScheduledBillPayResult.OK_PAID:
                     case ScheduledBillPayResult.FAIL_NOT_ENOUGH:
-                        context.BankTransactions.Add(resultBag.transaction);
-                        context.SaveChanges();
+                        context.CreateTransaction(resultBag.transaction);
                         break;
                     default:
                         throw new ArgumentException("Unhandled value in switch statement");
                 }
             }
 
-
-            context.SaveChanges();
+            context.SaveChangesAsync();
         }
 
         Task IHostedService.StopAsync(CancellationToken cancellationToken)
